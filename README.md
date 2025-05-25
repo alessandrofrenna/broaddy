@@ -1,5 +1,5 @@
 # Broaddy
-Broddy is a lightweight library that allows the creation of small broadcast networks of objects.</br>
+Broaddy is a lightweight library that allows the creation of small broadcast networks of objects.</br>
 It is a simple implementation of the [Observer design pattern](https://en.wikipedia.org/wiki/Observer_pattern).
 
 ## What is a BroadcastNetwork?
