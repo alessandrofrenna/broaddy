@@ -21,8 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,17 +78,14 @@ public class DefaultBroadcastNetworkService implements BroadcastNetworkService {
         LOG.trace("Disposing BroadcastNetwork with id {}", networkId);
         CompletableFuture<Void> shutdownCompletableFuture = locatedNetwork.get().shutdown();
         try {
-            shutdownCompletableFuture.get(5, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            LOG.trace("Dispose operation failed because: {}", e.getMessage(), e);
-            return false;
-        }
-        if (shutdownCompletableFuture.isDone()) {
+            shutdownCompletableFuture.get();
             LOG.trace("BroadcastNetwork with id {} is offline", networkId);
             networkRegistry.remove(networkId);
             LOG.trace("Disposed BroadcastNetwork with id {}", networkId);
             return true;
+        } catch (InterruptedException | ExecutionException e) {
+            LOG.trace("Dispose operation failed because: {}", e.getMessage(), e);
+            return false;
         }
-        return false;
     }
 }
