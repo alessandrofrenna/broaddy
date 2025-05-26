@@ -131,6 +131,15 @@ public class NetworksAndPeersTests {
     }
 
     @Test
+    void registeringPeersWithDifferentIdTypes_shouldSucceed() {
+        NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_1"));
+        NetworkPeer peer2 = new DefaultNetworkPeer(new RoutableId.UUID());
+        peer1.join(network, (msg) -> {});
+        peer2.join(network, (msg) -> {});
+        assertEquals(2, network.size());
+    }
+
+    @Test
     void peerConnectionToMultipleNetworks_shouldSucceed() {
         BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.UUID());
         NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_1"));

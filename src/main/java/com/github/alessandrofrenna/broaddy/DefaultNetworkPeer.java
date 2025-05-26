@@ -23,17 +23,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DefaultNetworkPeer implements NetworkPeer {
-    private final RoutableId<?> routableId;
+    private final RoutableId<?> peerId;
     private final Map<NetworkId<?>, JoinedNetwork> joinedNetworks = new ConcurrentHashMap<>();
 
-    public DefaultNetworkPeer(RoutableId<?> routableId) {
-        this.routableId = routableId;
+    public DefaultNetworkPeer(RoutableId<?> id) {
+        this.peerId = id;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public RoutableId<?> id() {
-        return routableId;
+        return peerId;
     }
 
     @Override
@@ -89,12 +88,12 @@ public class DefaultNetworkPeer implements NetworkPeer {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNetworkPeer that = (DefaultNetworkPeer) o;
-        return Objects.equals(routableId, that.routableId);
+        return Objects.equals(peerId, that.peerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(routableId);
+        return Objects.hashCode(peerId);
     }
 
     private record JoinedNetwork(BroadcastNetwork network, Consumer<Message<?>> consumer) { }

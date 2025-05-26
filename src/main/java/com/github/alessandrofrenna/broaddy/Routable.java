@@ -17,13 +17,8 @@
 
 package com.github.alessandrofrenna.broaddy;
 
-public interface Routable extends Comparable<Routable> {
-    <T> RoutableId<T> id();
+public interface Routable {
+    RoutableId<?> id();
     <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message);
     <T> void forceDisconnection(NetworkId<T> networkId);
-
-    @Override
-    default int compareTo(Routable routable) {
-        return id().compareTo(routable.id());
-    }
 }
