@@ -19,10 +19,10 @@ package com.github.alessandrofrenna.broaddy;
 
 import java.util.Objects;
 
-public interface PeerId<T> extends Comparable<PeerId<T>> {
+public interface RoutableId<T> extends Comparable<RoutableId<T>> {
     T get();
 
-    record String(java.lang.String id) implements PeerId<java.lang.String> {
+    record String(java.lang.String id) implements RoutableId<java.lang.String> {
         public String {
             Objects.requireNonNull(id, "id is required but it is null");
         }
@@ -33,12 +33,12 @@ public interface PeerId<T> extends Comparable<PeerId<T>> {
         }
 
         @Override
-        public int compareTo(PeerId<java.lang.String> other) {
+        public int compareTo(RoutableId<java.lang.String> other) {
             return get().compareTo(other.get());
         }
     }
 
-    record UUID(java.util.UUID uuid) implements PeerId<java.util.UUID> {
+    record UUID(java.util.UUID uuid) implements RoutableId<java.util.UUID> {
 
         public UUID {
             Objects.requireNonNull(uuid, "id is required, null provided");
@@ -54,7 +54,7 @@ public interface PeerId<T> extends Comparable<PeerId<T>> {
         }
 
         @Override
-        public int compareTo(PeerId<java.util.UUID> other) {
+        public int compareTo(RoutableId<java.util.UUID> other) {
             return get().compareTo(other.get());
         }
     }

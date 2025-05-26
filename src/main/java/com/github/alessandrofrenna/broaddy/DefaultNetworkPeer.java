@@ -23,17 +23,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DefaultNetworkPeer implements NetworkPeer {
-    private final PeerId<?> peerId;
+    private final RoutableId<?> routableId;
     private final Map<NetworkId<?>, JoinedNetwork> joinedNetworks = new ConcurrentHashMap<>();
 
-    public DefaultNetworkPeer(PeerId<?> peerId) {
-        this.peerId = peerId;
+    public DefaultNetworkPeer(RoutableId<?> routableId) {
+        this.routableId = routableId;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public PeerId<?> id() {
-        return peerId;
+    public RoutableId<?> id() {
+        return routableId;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <T, V> void notify(NetworkId<T> networkId, Message<V> message) {
+    public <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message) {
         if (!joinedNetworks.containsKey(networkId)) {
             return;
         }
@@ -81,7 +81,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <T> void forceLeave(NetworkId<T> networkId) {
+    public <T> void forceDisconnection(NetworkId<T> networkId) {
         leave(networkId);
     }
 
@@ -89,12 +89,12 @@ public class DefaultNetworkPeer implements NetworkPeer {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         DefaultNetworkPeer that = (DefaultNetworkPeer) o;
-        return Objects.equals(peerId, that.peerId);
+        return Objects.equals(routableId, that.routableId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(peerId);
+        return Objects.hashCode(routableId);
     }
 
     private record JoinedNetwork(BroadcastNetwork network, Consumer<Message<?>> consumer) { }

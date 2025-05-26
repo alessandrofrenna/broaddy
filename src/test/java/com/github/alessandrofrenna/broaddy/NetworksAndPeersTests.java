@@ -47,7 +47,7 @@ public class NetworksAndPeersTests {
 
     @Test
     void connectPeer_shouldSucceed() {
-        NetworkPeer peer1 = new DefaultNetworkPeer(new PeerId.UUID());
+        NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.UUID());
         boolean joinResult = peer1.join(network, (msg) -> {});
         assertTrue(joinResult);
         assertEquals(1, peer1.countJoinedNetworks());
@@ -56,7 +56,7 @@ public class NetworksAndPeersTests {
 
     @Test
     void connectingPeerWithSameId_shouldFail() {
-        PeerId<String> id = new PeerId.String("test_peer_id");
+        RoutableId<String> id = new RoutableId.String("test_peer_id");
         NetworkPeer peer1 = new DefaultNetworkPeer(id);
         NetworkPeer peer2 = new DefaultNetworkPeer(id);
         boolean joinResultPeer1 = peer1.join(network, (msg) -> {});
@@ -70,8 +70,8 @@ public class NetworksAndPeersTests {
     @Test
     void broadcastCall_shouldNotifyAllConnectedPeers() {
         AtomicInteger msgCount = new AtomicInteger(0);
-        var peer1 = new DefaultNetworkPeer(new PeerId.UUID());
-        var peer2 = new DefaultNetworkPeer(new PeerId.UUID());
+        var peer1 = new DefaultNetworkPeer(new RoutableId.UUID());
+        var peer2 = new DefaultNetworkPeer(new RoutableId.UUID());
         Consumer<Message<?>> consumer = (Message<?> message) -> {
             if (message.payload() instanceof String payload) {
                 msgCount.incrementAndGet();
@@ -88,7 +88,7 @@ public class NetworksAndPeersTests {
 
     @Test
     void disconnectPeer_shouldSucceed() {
-        NetworkPeer peer1 = new DefaultNetworkPeer(new PeerId.UUID());
+        NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.UUID());
         peer1.join(network, (msg) -> {});
         var leaveResult = peer1.leave(network.id());
         assertTrue(leaveResult);
@@ -103,15 +103,15 @@ public class NetworksAndPeersTests {
 
     @Test
     void disconnectPeer_shouldFailWhenPeerDoesNotExists() {
-        PeerId<String> missingPeerId = new PeerId.String("test_missing_peer");
-        var disconnectResult = network.disconnectPeer(missingPeerId);
+        RoutableId<String> missingRoutableId = new RoutableId.String("test_missing_peer");
+        var disconnectResult = network.disconnectPeer(missingRoutableId);
         assertEquals(BroadcastNetwork.Disconnect.NOT_FOUND, disconnectResult);
     }
 
     @Test
     void shutdown_shouldSucceed() throws ExecutionException, InterruptedException, TimeoutException {
-        NetworkPeer peer1 = new DefaultNetworkPeer(new PeerId.String("test_peer_id_1"));
-        NetworkPeer peer2 = new DefaultNetworkPeer(new PeerId.String("test_peer_id_2"));
+        NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_1"));
+        NetworkPeer peer2 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_2"));
         peer1.join(network, (msg) -> {});
         peer2.join(network, (msg) -> {});
         assertEquals(2, network.size());
@@ -133,7 +133,7 @@ public class NetworksAndPeersTests {
     @Test
     void peerConnectionToMultipleNetworks_shouldSucceed() {
         BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.UUID());
-        NetworkPeer peer1 = new DefaultNetworkPeer(new PeerId.String("test_peer_id_1"));
+        NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_1"));
 
         peer1.join(network, (msg) -> {});
         peer1.join(network2, (msg) -> {});

@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.alessandrofrenna.broaddy;
 
-import java.util.function.Consumer;
+public interface Routable extends Comparable<Routable> {
+    <T> RoutableId<T> id();
+    <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message);
+    <T> void forceDisconnection(NetworkId<T> networkId);
 
-public interface NetworkPeer extends Routable {
-    boolean join(BroadcastNetwork network, Consumer<Message<?>> messageConsumer);
-    <T> boolean leave(NetworkId<T> networkId);
-    long countJoinedNetworks();
+    @Override
+    default int compareTo(Routable routable) {
+        return id().compareTo(routable.id());
+    }
 }

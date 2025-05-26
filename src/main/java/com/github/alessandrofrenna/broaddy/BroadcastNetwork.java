@@ -21,8 +21,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface BroadcastNetwork {
     NetworkId<?> id();
-    Connect connectPeer(NetworkPeer peer);
-    <U> Disconnect disconnectPeer(PeerId<U> peerId);
+    Connect connectPeer(Routable peer);
+    <U> Disconnect disconnectPeer(RoutableId<U> routableId);
     long size();
     boolean isEmpty();
     <T> void broadcast(Message<T> message);

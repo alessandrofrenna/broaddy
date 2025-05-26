@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class DefaultBroadcastNetwork implements BroadcastNetwork {
     private final NetworkId<?> networkId;
-    private final Set<NetworkPeer> networkPeers = new CopyOnWriteArraySet<>();
+    private final Set<Routable> routablePeer = new CopyOnWriteArraySet<>();
     private final Lock networkLock = new ReentrantLock(true);
 
     private volatile Status networkStatus;
@@ -42,16 +42,16 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     }
 
     @Override
-    public Connect connectPeer(NetworkPeer peer) {
+    public Connect connectPeer(Routable peer) {
         networkLock.lock();
         try {
             if (networkStatus != Status.ONLINE) { // Combined check
                 return networkStatus == Status.SHUTTING_DOWN ? Connect.NETWORK_SHUTTING_DOWN : Connect.NETWORK_OFFLINE;
             }
-            if (networkPeers.contains(peer)) {
+            if (routablePeer.contains(peer)) {
                 return Connect.EXISTING_ID;
             }
-            if (networkPeers.add(peer)) {
+            if (routablePeer.add(peer)) {
                 return Connect.OK;
             }
             return Connect.FAILED; // Should ideally not be reached with COWSet if contains was false
@@ -61,11 +61,11 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     }
 
     @Override
-    public <U> Disconnect disconnectPeer(PeerId<U> peerId) {
-        if (networkPeers.removeIf(networkPeer -> networkPeer.id().equals(peerId))) {
+    public <U> Disconnect disconnectPeer(RoutableId<U> routableId) {
+        if (routablePeer.removeIf(networkPeer -> networkPeer.id().equals(routableId))) {
             networkLock.lock();
             try {
-                if (networkStatus == Status.SHUTTING_DOWN && networkPeers.isEmpty() && shutdownCompletionFuture != null && !shutdownCompletionFuture.isDone()) {
+                if (networkStatus == Status.SHUTTING_DOWN && routablePeer.isEmpty() && shutdownCompletionFuture != null && !shutdownCompletionFuture.isDone()) {
                     networkStatus = Status.OFFLINE;
                     shutdownCompletionFuture.complete(null);
                 }
@@ -79,19 +79,19 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
 
     @Override
     public long size() {
-        return networkPeers.size();
+        return routablePeer.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return networkPeers.isEmpty();
+        return routablePeer.isEmpty();
     }
 
     @Override
     public <T>  void broadcast(Message<T> message) {
         networkLock.lock();
         try {
-            if (networkStatus == Status.OFFLINE || networkPeers.isEmpty()) {
+            if (networkStatus == Status.OFFLINE || routablePeer.isEmpty()) {
                 return;
             }
         } finally {
@@ -99,7 +99,7 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
         }
         // If we reach here, status is either Online or ShuttingDown, and peers exist.
         // The next forEach should operate on a snapshot of the networkPeers COW array set
-        networkPeers.forEach(networkPeer -> networkPeer.notify(id(), message));
+        routablePeer.forEach(networkPeer -> networkPeer.deliverMessage(id(), message));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
             }
 
             shutdownCompletionFuture = new CompletableFuture<>();
-            if (networkPeers.isEmpty()) {
+            if (routablePeer.isEmpty()) {
                 networkStatus = Status.OFFLINE;
                 shutdownCompletionFuture.complete(null);
                 return shutdownCompletionFuture;
@@ -124,7 +124,7 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
             networkLock.unlock();
         }
 
-        networkPeers.forEach(networkPeer -> networkPeer.forceLeave(id()));
+        routablePeer.forEach(networkPeer -> networkPeer.forceDisconnection(id()));
         return shutdownCompletionFuture;
     }
 }
