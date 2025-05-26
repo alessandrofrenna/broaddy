@@ -112,14 +112,14 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
             if (networkStatus == Status.OFFLINE) {
                 return CompletableFuture.completedFuture(null);
             }
+
+            shutdownCompletionFuture = new CompletableFuture<>();
             if (networkPeers.isEmpty()) {
                 networkStatus = Status.OFFLINE;
                 shutdownCompletionFuture.complete(null);
                 return shutdownCompletionFuture;
             }
-
             networkStatus = Status.SHUTTING_DOWN;
-            shutdownCompletionFuture = new CompletableFuture<>();
         } finally {
             networkLock.unlock();
         }
