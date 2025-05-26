@@ -1,7 +1,7 @@
 name: Run tests and publish to Github Packages
 on:
   release:
-    types: [created]
+    types: [created, prereleased]
 jobs:
   publish:
     runs-on: ubuntu-latest
