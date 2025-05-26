@@ -37,7 +37,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <V> boolean join(BroadcastNetwork network, Consumer<Message<V>> messageConsumer) {
+    public boolean join(BroadcastNetwork network, Consumer<Message<?>> messageConsumer) {
         Objects.requireNonNull(network, "network is required, null provided");
         Objects.requireNonNull(messageConsumer, "message consumer is require, null provided");
 
@@ -68,13 +68,16 @@ public class DefaultNetworkPeer implements NetworkPeer {
         return joinedNetworks.size();
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public <T, V> void notify(NetworkId<T> networkId, Message<V> message) {
         if (!joinedNetworks.containsKey(networkId)) {
             return;
         }
-        ((Consumer<Message<V>>) joinedNetworks.get(networkId).consumer()).accept(message);
+        Consumer<Message<?>> genericMessageConsumer = joinedNetworks.get(networkId).consumer();
+        try {
+            genericMessageConsumer.accept(message);
+        } catch (Exception ignore) {
+        }
     }
 
     @Override
@@ -94,5 +97,5 @@ public class DefaultNetworkPeer implements NetworkPeer {
         return Objects.hashCode(peerId);
     }
 
-    private record JoinedNetwork(BroadcastNetwork network, Consumer<?> consumer) { }
+    private record JoinedNetwork(BroadcastNetwork network, Consumer<Message<?>> consumer) { }
 }

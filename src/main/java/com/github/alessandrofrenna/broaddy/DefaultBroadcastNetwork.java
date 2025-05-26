@@ -33,11 +33,10 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
 
     public DefaultBroadcastNetwork(NetworkId<?> networkId) {
         this.networkId = networkId;
-        this.networkStatus = Status.Online;
+        this.networkStatus = Status.ONLINE;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public NetworkId<?> id() {
         return networkId;
     }
@@ -46,24 +45,19 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     public Connect connectPeer(NetworkPeer peer) {
         networkLock.lock();
         try {
-            switch (networkStatus) {
-                case ShuttingDown -> {
-                    return Connect.NETWORK_SHUTTING_DOWN;
-                }
-                case Offline -> {
-                    return Connect.NETWORK_OFFLINE;
-                }
+            if (networkStatus != Status.ONLINE) { // Combined check
+                return networkStatus == Status.SHUTTING_DOWN ? Connect.NETWORK_SHUTTING_DOWN : Connect.NETWORK_OFFLINE;
             }
+            if (networkPeers.contains(peer)) {
+                return Connect.EXISTING_ID;
+            }
+            if (networkPeers.add(peer)) {
+                return Connect.OK;
+            }
+            return Connect.FAILED; // Should ideally not be reached with COWSet if contains was false
         } finally {
             networkLock.unlock();
         }
-        if (networkPeers.contains(peer)) {
-            return Connect.EXISTING_ID;
-        }
-        if (networkPeers.add(peer)) {
-            return Connect.OK;
-        }
-        return Connect.FAILED;
     }
 
     @Override
@@ -71,8 +65,8 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
         if (networkPeers.removeIf(networkPeer -> networkPeer.id().equals(peerId))) {
             networkLock.lock();
             try {
-                if (networkStatus == Status.ShuttingDown && networkPeers.isEmpty() && shutdownCompletionFuture != null && !shutdownCompletionFuture.isDone()) {
-                    networkStatus = Status.Offline;
+                if (networkStatus == Status.SHUTTING_DOWN && networkPeers.isEmpty() && shutdownCompletionFuture != null && !shutdownCompletionFuture.isDone()) {
+                    networkStatus = Status.OFFLINE;
                     shutdownCompletionFuture.complete(null);
                 }
             } finally {
@@ -97,12 +91,14 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     public <T>  void broadcast(Message<T> message) {
         networkLock.lock();
         try {
-            if (networkStatus != Status.Online) {
+            if (networkStatus == Status.OFFLINE || networkPeers.isEmpty()) {
                 return;
             }
         } finally {
             networkLock.unlock();
         }
+        // If we reach here, status is either Online or ShuttingDown, and peers exist.
+        // The next forEach should operate on a snapshot of the networkPeers COW array set
         networkPeers.forEach(networkPeer -> networkPeer.notify(id(), message));
     }
 
@@ -110,25 +106,25 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     public CompletableFuture<Void> shutdown() {
         networkLock.lock();
         try {
-            if (networkStatus == Status.ShuttingDown) {
+            if (networkStatus == Status.SHUTTING_DOWN) {
                 return shutdownCompletionFuture;
             }
-            if (networkStatus == Status.Offline) {
+            if (networkStatus == Status.OFFLINE) {
                 return CompletableFuture.completedFuture(null);
             }
             if (networkPeers.isEmpty()) {
-                networkStatus = Status.Offline;
-                return CompletableFuture.completedFuture(null);
+                networkStatus = Status.OFFLINE;
+                shutdownCompletionFuture.complete(null);
+                return shutdownCompletionFuture;
             }
 
-            networkStatus = Status.ShuttingDown;
+            networkStatus = Status.SHUTTING_DOWN;
             shutdownCompletionFuture = new CompletableFuture<>();
         } finally {
             networkLock.unlock();
         }
 
         networkPeers.forEach(networkPeer -> networkPeer.forceLeave(id()));
-
         return shutdownCompletionFuture;
     }
 }

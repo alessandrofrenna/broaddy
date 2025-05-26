@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 
 public interface NetworkPeer extends Comparable<NetworkPeer> {
     <T> PeerId<T> id();
-    <T> boolean join(BroadcastNetwork network, Consumer<Message<T>> messageConsumer);
+    boolean join(BroadcastNetwork network, Consumer<Message<?>> messageConsumer);
     <T> boolean leave(NetworkId<T> networkId);
     long countJoinedNetworks();
 

@@ -17,9 +17,9 @@
 
 package com.github.alessandrofrenna.broaddy;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -42,7 +42,7 @@ public class NetworksAndPeersTests {
     @Test
     void networkName_shouldBeCorrect() {
         assertNotNull(network.id());
-        assertEquals("test_network", network.<String>id().get());
+        assertEquals("test_network", network.id().get());
     }
 
     @Test
@@ -72,14 +72,17 @@ public class NetworksAndPeersTests {
         AtomicInteger msgCount = new AtomicInteger(0);
         var peer1 = new DefaultNetworkPeer(new PeerId.UUID());
         var peer2 = new DefaultNetworkPeer(new PeerId.UUID());
-        Consumer<Message<String>> consumer = (Message<String> message) -> {
-            msgCount.incrementAndGet();
-            assertEquals("Hello world", message.payload());
+        Consumer<Message<?>> consumer = (Message<?> message) -> {
+            if (message.payload() instanceof String payload) {
+                msgCount.incrementAndGet();
+                assertNotNull(message.id());
+                assertEquals("Hello world", payload);
+            }
         };
         peer1.join(network, consumer);
         peer2.join(network, consumer);
         assertEquals(2, network.size());
-        network.broadcast(() -> "Hello world");
+        network.broadcast(new StringMessage("Hello world"));
         assertEquals(2, msgCount.get());
     }
 
@@ -106,7 +109,7 @@ public class NetworksAndPeersTests {
     }
 
     @Test
-    void shutdown_shouldSucceed() {
+    void shutdown_shouldSucceed() throws ExecutionException, InterruptedException, TimeoutException {
         NetworkPeer peer1 = new DefaultNetworkPeer(new PeerId.String("test_peer_id_1"));
         NetworkPeer peer2 = new DefaultNetworkPeer(new PeerId.String("test_peer_id_2"));
         peer1.join(network, (msg) -> {});
@@ -114,23 +117,17 @@ public class NetworksAndPeersTests {
         assertEquals(2, network.size());
 
         var shutdownCF = network.shutdown();
-
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        try {
-            scheduler.schedule(() -> {
-                assertTrue(shutdownCF.isDone());
-                assertTrue(network.isEmpty());
-                assertEquals(0, peer1.countJoinedNetworks());
-                assertEquals(0, peer2.countJoinedNetworks());
-                // trying to rejoin the network should fail!
-                assertFalse(peer1.join(network, (msg) -> {}));
-                assertFalse(peer2.join(network, (msg) -> {}));
-                assertEquals(BroadcastNetwork.Connect.NETWORK_OFFLINE, network.connectPeer(peer1));
-                assertEquals(BroadcastNetwork.Connect.NETWORK_OFFLINE, network.connectPeer(peer2));
-            }, 3, TimeUnit.SECONDS);
-        } finally {
-            scheduler.shutdownNow();
-        }
+        shutdownCF.thenRun(() -> {
+            assertTrue(shutdownCF.isDone());
+            assertTrue(network.isEmpty());
+            assertEquals(0, peer1.countJoinedNetworks());
+            assertEquals(0, peer2.countJoinedNetworks());
+            // trying to rejoin the network should fail!
+            assertFalse(peer1.join(network, (msg) -> {}));
+            assertFalse(peer2.join(network, (msg) -> {}));
+            assertEquals(BroadcastNetwork.Connect.NETWORK_OFFLINE, network.connectPeer(peer1));
+            assertEquals(BroadcastNetwork.Connect.NETWORK_OFFLINE, network.connectPeer(peer2));
+        }).get(5, TimeUnit.SECONDS); //
     }
 
     @Test

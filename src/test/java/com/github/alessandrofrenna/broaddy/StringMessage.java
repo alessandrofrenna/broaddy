@@ -19,7 +19,22 @@ package com.github.alessandrofrenna.broaddy;
 
 import java.util.UUID;
 
-public interface Message<T> {
-    UUID id();
-    T payload();
+public class StringMessage implements Message<String> {
+    private final UUID id;
+    private final String content;
+
+    public StringMessage(String content) {
+        this.content = content;
+        this.id = UUID.randomUUID();
+    }
+
+    @Override
+    public UUID id() {
+        return id;
+    }
+
+    @Override
+    public String payload() {
+        return content;
+    }
 }

@@ -20,7 +20,7 @@ package com.github.alessandrofrenna.broaddy;
 import java.util.concurrent.CompletableFuture;
 
 public interface BroadcastNetwork {
-    <T> NetworkId<T> id();
+    NetworkId<?> id();
     Connect connectPeer(NetworkPeer peer);
     <U> Disconnect disconnectPeer(PeerId<U> peerId);
     long size();
@@ -29,7 +29,7 @@ public interface BroadcastNetwork {
     CompletableFuture<Void> shutdown();
 
     enum Status {
-        Online, ShuttingDown, Offline
+        ONLINE, SHUTTING_DOWN, OFFLINE
     }
 
     enum Connect {
