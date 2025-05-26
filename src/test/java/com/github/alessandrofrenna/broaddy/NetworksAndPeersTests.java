@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NetworksAndPeersTests {
@@ -151,6 +152,24 @@ public class NetworksAndPeersTests {
         assertEquals(1, network.size());
         assertFalse(network2.isEmpty());
         assertEquals(1, network2.size());
+    }
+
+    @Test
+    void callingMethodsOfTheNetworkPeerWithNulls_shouldFail() {
+        assertThrows(IllegalArgumentException.class, () -> new DefaultNetworkPeer(null));
+        NetworkPeer networkPeer = new DefaultNetworkPeer(new RoutableId.String("test_peer"));
+        assertThrows(IllegalArgumentException.class, () -> networkPeer.join(null, (msg) -> {}));
+        assertThrows(IllegalArgumentException.class, () -> networkPeer.join(new DefaultBroadcastNetwork(new NetworkId.UUID()), null));
+        assertThrows(IllegalArgumentException.class, () -> networkPeer.leave(null));
+        assertThrows(IllegalArgumentException.class, () -> networkPeer.forceDisconnection(null));
+        assertThrows(IllegalArgumentException.class, () -> networkPeer.deliverMessage(null, new StringMessage("")));
+    }
+
+    @Test
+    void callingMethodsOfTheBroadcastNetworkWithNulls_shouldFail() {
+        assertThrows(IllegalArgumentException.class, () -> new DefaultNetworkPeer(null));
+        assertThrows(IllegalArgumentException.class, () -> network.connectPeer(null));
+        assertThrows(IllegalArgumentException.class, () -> network.disconnectPeer(null));
     }
 
 }

@@ -42,7 +42,7 @@ public class DefaultBroadcastNetworkService implements BroadcastNetworkService {
 
         final Optional<BroadcastNetwork> networkOptional = networkRegistry.find(networkId);
         if (networkOptional.isPresent()) {
-            LOG.trace("A network with {} already exists. The existing instance will be returned", networkId);
+            LOG.info("A network with {} already exists. The existing instance will be returned", networkId);
             return networkOptional.get();
         }
 
@@ -52,7 +52,7 @@ public class DefaultBroadcastNetworkService implements BroadcastNetworkService {
         if (!result) {
             throw new BroadcastNetworkStoreException(networkId);
         }
-        LOG.trace("BroadcastNetwork with id {} created and stored inside {}", networkId, networkRegistry);
+        LOG.info("BroadcastNetwork with id {} created and stored inside {}", networkId, networkRegistry);
         return network;
     }
 
@@ -72,7 +72,7 @@ public class DefaultBroadcastNetworkService implements BroadcastNetworkService {
         }
         Optional<BroadcastNetwork> locatedNetwork = locate(networkId);
         if (locatedNetwork.isEmpty()) {
-            LOG.trace("BroadcastNetwork with id {} not found, destroy operation is complete", networkId);
+            LOG.info("BroadcastNetwork with id {} not found, destroy operation is complete", networkId);
             return true;
         }
         LOG.trace("Disposing BroadcastNetwork with id {}", networkId);
@@ -81,10 +81,10 @@ public class DefaultBroadcastNetworkService implements BroadcastNetworkService {
             shutdownCompletableFuture.get();
             LOG.trace("BroadcastNetwork with id {} is offline", networkId);
             networkRegistry.remove(networkId);
-            LOG.trace("Disposed BroadcastNetwork with id {}", networkId);
+            LOG.info("Disposed BroadcastNetwork with id {}", networkId);
             return true;
         } catch (InterruptedException | ExecutionException e) {
-            LOG.trace("Dispose operation failed because: {}", e.getMessage(), e);
+            LOG.error("Dispose operation failed because: {}", e.getMessage(), e);
             return false;
         }
     }

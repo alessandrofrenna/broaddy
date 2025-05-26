@@ -46,9 +46,9 @@ public class InMemoryBroadcastNetworkRegistry implements BroadcastNetworkRegistr
         // when the map doesn't contain the value, put returns null
         boolean result = value == null;
         if (result) {
-            LOG.trace("BroadcastNetwork with id {} was stored successfully", network.id());
+            LOG.info("BroadcastNetwork with id {} was stored successfully", network.id());
         } else {
-            LOG.trace("BroadcastNetwork with id {} was not stored", network.id());
+            LOG.error("BroadcastNetwork with id {} was not stored", network.id());
         }
         return result;
     }
@@ -76,9 +76,9 @@ public class InMemoryBroadcastNetworkRegistry implements BroadcastNetworkRegistr
         // when the map doesn't contain the value, replace returns null
         boolean result = value != null;
         if (result) {
-            LOG.trace("BroadcastNetwork with id {} was updated successfully", network.id());
+            LOG.info("BroadcastNetwork with id {} was updated successfully", network.id());
         } else {
-            LOG.trace("BroadcastNetwork with id {} was not updated", network.id());
+            LOG.error("BroadcastNetwork with id {} was not updated", network.id());
         }
         return result;
     }
@@ -96,7 +96,7 @@ public class InMemoryBroadcastNetworkRegistry implements BroadcastNetworkRegistr
         if (Objects.isNull(networkId)) {
             throw new IllegalArgumentException("networkId is required, null provided");
         }
-        LOG.trace("Trying to remove BroadcastNetwork with id {}", networkId);
+        LOG.info("Removing BroadcastNetwork with id {}", networkId);
         networkMap.remove(networkId);
     }
 

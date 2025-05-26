@@ -22,12 +22,21 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DefaultNetworkPeer implements NetworkPeer {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultNetworkPeer.class);
+
     private final RoutableId<?> peerId;
     private final Map<NetworkId<?>, JoinedNetwork> joinedNetworks = new ConcurrentHashMap<>();
 
-    public DefaultNetworkPeer(RoutableId<?> id) {
-        this.peerId = id;
+    public DefaultNetworkPeer(RoutableId<?> peerId) {
+        if (Objects.isNull(peerId)) {
+            throw new IllegalArgumentException("peerId is required, null provided");
+        }
+        this.peerId = peerId;
+        LOG.info("Created NetworkPeer with id {}", peerId);
     }
 
     @Override
@@ -37,28 +46,44 @@ public class DefaultNetworkPeer implements NetworkPeer {
 
     @Override
     public boolean join(BroadcastNetwork network, Consumer<Message<?>> messageConsumer) {
-        Objects.requireNonNull(network, "network is required, null provided");
-        Objects.requireNonNull(messageConsumer, "message consumer is require, null provided");
+        if (Objects.isNull(network)) {
+            throw new IllegalArgumentException("network is required, null provided");
+        }
+        if (Objects.isNull(messageConsumer)) {
+            throw new IllegalArgumentException("messageConsumer is required, null provided");
+        }
 
+        final NetworkId<?> networkId = network.id();
+        LOG.trace("Joining NetworkPeer {} to BroadcastNetwork with id {}", peerId, networkId);
         var connect = network.connectPeer(this);
         if (connect == BroadcastNetwork.Connect.OK) {
             joinedNetworks.put(network.id(), new JoinedNetwork(network, messageConsumer));
+            LOG.info("NetworkPeer {} joined to BroadcastNetwork with id {}: {}", peerId, networkId, connect.description());
             return true;
         }
+        LOG.error("NetworkPeer {} join to BroadcastNetwork with id {} failed: {}", peerId, networkId, connect.description());
         return false;
     }
 
     @Override
     public <T> boolean leave(NetworkId<T> networkId) {
-        Objects.requireNonNull(networkId,"networkId is required, null provided");
+        if (Objects.isNull(networkId)) {
+            throw new IllegalArgumentException("networkId is required, null provided");
+        }
+
         if (!joinedNetworks.containsKey(networkId)) {
+            LOG.info("NetworkPeer {} has not joined a BroadcastNetwork with id {}", peerId, networkId);
             return false;
         }
+
+        LOG.trace("NetworkPeer {} is leaving BroadcastNetwork with id {}", peerId, networkId);
         var disconnect = joinedNetworks.get(networkId).network().disconnectPeer(id());
         if (disconnect == BroadcastNetwork.Disconnect.OK) {
             joinedNetworks.remove(networkId);
+            LOG.info("NetworkPeer {} left BroadcastNetwork with id {}: {}", peerId, networkId, disconnect.description());
             return true;
         }
+        LOG.error("NetworkPeer {} failed to leave BroadcastNetwork with id {}: {}", peerId, networkId, disconnect.description());
         return false;
     }
 
@@ -69,18 +94,29 @@ public class DefaultNetworkPeer implements NetworkPeer {
 
     @Override
     public <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message) {
+        if (Objects.isNull(networkId)) {
+            throw new IllegalArgumentException("networkId is required, null provided");
+        }
+
         if (!joinedNetworks.containsKey(networkId)) {
             return;
         }
         Consumer<Message<?>> genericMessageConsumer = joinedNetworks.get(networkId).consumer();
         try {
+            LOG.info("NetworkPeer {} received a message from BroadcastNetwork with id {}", peerId, networkId);
             genericMessageConsumer.accept(message);
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            LOG.error("Error processing the message payload: {}", e.getMessage(), e);
         }
     }
 
     @Override
     public <T> void forceDisconnection(NetworkId<T> networkId) {
+        if (Objects.isNull(networkId)) {
+            throw new IllegalArgumentException("networkId is required, null provided");
+        }
+
+        LOG.info("NetworkPeer {} was forced to leave BroadcastNetwork with id {}", id(), networkId);
         leave(networkId);
     }
 
