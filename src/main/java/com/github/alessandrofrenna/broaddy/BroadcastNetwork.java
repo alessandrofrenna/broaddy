@@ -45,7 +45,6 @@ public interface BroadcastNetwork {
             this.description = description;
         }
 
-        @SuppressWarnings("unused")
         public String description() {
             return description;
         }
@@ -61,7 +60,6 @@ public interface BroadcastNetwork {
             this.description = description;
         }
 
-        @SuppressWarnings("unused")
         public String description() {
             return description;
         }
