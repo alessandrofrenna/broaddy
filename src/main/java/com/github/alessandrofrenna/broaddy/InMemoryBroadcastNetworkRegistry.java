@@ -56,13 +56,13 @@ public class InMemoryBroadcastNetworkRegistry implements BroadcastNetworkRegistr
     }
 
     @Override
-    public Optional<BroadcastNetwork> locate(NetworkId<?> networkId) {
+    public Optional<BroadcastNetwork> find(NetworkId<?> networkId) {
         Objects.requireNonNull(networkId, "networkId is required, null provided");
         return Optional.ofNullable(networkMap.getOrDefault(networkId, null));
     }
 
     @Override
-    public void dispose(NetworkId<?> networkId) {
+    public void remove(NetworkId<?> networkId) {
         Objects.requireNonNull(networkId, "networkId is required, null provided");
         networkMap.remove(networkId);
     }

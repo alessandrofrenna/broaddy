@@ -20,10 +20,10 @@ package com.github.alessandrofrenna.broaddy;
 import java.util.Optional;
 
 public interface BroadcastNetworkRegistry {
+    Optional<BroadcastNetwork> find(NetworkId<?> networkId);
     boolean store(BroadcastNetwork network);
     boolean update(NetworkId<?> networkId, BroadcastNetwork network);
-    Optional<BroadcastNetwork> locate(NetworkId<?> networkId);
-    void dispose(NetworkId<?> networkId);
+    void remove(NetworkId<?> networkId);
     boolean isEmpty();
     long size();
 }
