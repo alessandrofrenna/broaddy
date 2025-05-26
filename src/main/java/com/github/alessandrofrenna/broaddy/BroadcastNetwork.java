@@ -14,11 +14,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.alessandrofrenna.broaddy;
 
-public interface BroadcastNetwork extends AutoCloseable {
+import java.util.concurrent.CompletableFuture;
+
+public interface BroadcastNetwork {
+    <T> NetworkId<T> id();
+    Connect connectPeer(NetworkPeer peer);
+    <U> Disconnect disconnectPeer(PeerId<U> peerId);
+    long size();
+    boolean isEmpty();
+    <T> void broadcast(Message<T> message);
+    CompletableFuture<Void> shutdown();
+
     enum Status {
         Online, ShuttingDown, Offline
     }
 
+    enum Connect {
+        OK("Peer connected"),
+        EXISTING_ID("Peer with the same id is already connected"),
+        NETWORK_SHUTTING_DOWN("Peer not connected, network is shutting down"),
+        NETWORK_OFFLINE("Peer not connected, network is offline"),
+        FAILED("Peer connection failed");
+
+        final String description;
+
+        Connect(String description) {
+            this.description = description;
+        }
+
+        @SuppressWarnings("unused")
+        public String description() {
+            return description;
+        }
+    }
+
+    enum Disconnect {
+        OK("Peer disconnected"),
+        NOT_FOUND("Peer not found");
+
+        final String description;
+
+        Disconnect(String description) {
+            this.description = description;
+        }
+
+        @SuppressWarnings("unused")
+        public String description() {
+            return description;
+        }
+    }
 }

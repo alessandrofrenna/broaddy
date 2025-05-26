@@ -14,21 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.alessandrofrenna.broaddy;
 
-import java.util.function.Consumer;
+import java.util.UUID;
 
-public interface NetworkPeer extends Comparable<NetworkPeer> {
-    <T> PeerId<T> id();
-    <T> boolean join(BroadcastNetwork network, Consumer<Message<T>> messageConsumer);
-    <T> boolean leave(NetworkId<T> networkId);
-    long countJoinedNetworks();
-
-    <T, V> void notify(NetworkId<T> networkId, Message<V> message);
-    <T> void forceLeave(NetworkId<T> networkId);
-
-    @Override
-    default int compareTo(NetworkPeer networkPeer) {
-        return id().compareTo(networkPeer.id());
+public interface Message<T> {
+    default UUID id() {
+        return UUID.randomUUID();
     }
+
+    T payload();
 }
