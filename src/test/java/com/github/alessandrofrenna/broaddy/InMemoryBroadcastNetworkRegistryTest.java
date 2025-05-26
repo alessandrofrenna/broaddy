@@ -139,11 +139,11 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void callingMethodsOfTheRegistryWithNulls_shouldFail() {
-        assertThrows(NullPointerException.class, () -> networkRegistry.store(null));
-        assertThrows(NullPointerException.class, () -> networkRegistry.update(null, new DefaultBroadcastNetwork(new NetworkId.UUID())));
-        assertThrows(NullPointerException.class, () -> networkRegistry.update(new NetworkId.UUID(), null));
-        assertThrows(NullPointerException.class, () -> networkRegistry.find(null));
-        assertThrows(NullPointerException.class, () -> networkRegistry.remove(null));
+        assertThrows(IllegalArgumentException.class, () -> networkRegistry.store(null));
+        assertThrows(IllegalArgumentException.class, () -> networkRegistry.update(null, new DefaultBroadcastNetwork(new NetworkId.UUID())));
+        assertThrows(IllegalArgumentException.class, () -> networkRegistry.update(new NetworkId.UUID(), null));
+        assertThrows(IllegalArgumentException.class, () -> networkRegistry.find(null));
+        assertThrows(IllegalArgumentException.class, () -> networkRegistry.remove(null));
     }
 
 }
