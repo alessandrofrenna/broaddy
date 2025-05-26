@@ -89,7 +89,6 @@ public class BroadcastNetworkServiceMockedTests {
             fail("Dispose method threw an unexpected exception: " + e.getMessage());
         } finally {
             interruptThread.join(); // Ensure interrupting thread finishes
-            Thread.interrupted();
         }
 
         assertFalse(disposeResult.get());
