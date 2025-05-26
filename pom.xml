@@ -13,8 +13,9 @@
     </description>
 
     <properties>
+        <project.scm.id>github</project.scm.id>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
         <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
@@ -23,6 +24,19 @@
         <mockito-core.version>5.18.0</mockito-core.version>
         <argLine><!-- Prevent surefire errors --></argLine>
     </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub alessandrofrenna maven packages</name>
+            <url>https://maven.pkg.github.com/alessandrofrenna/broaddy</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub alessandrofrenna maven snapshot packages</name>
+            <url>https://maven.pkg.github.com/alessandrofrenna/broaddy</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <!-- logging -->
