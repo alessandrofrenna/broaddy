@@ -10,7 +10,8 @@ A member of the `BroadcastNetwork` is called a `NetworkPeer`.</br>
 A `NetworkPeer` can subscribe to multiple `BroadcastNetwork`s.
 
 ## Installation
-This library is hosted on [https://jitpack.io](https://jitpack.io/#alessandrofrenna/broaddy)
+This library is hosted on [https://jitpack.io](https://jitpack.io/#alessandrofrenna/broaddy).</br>
+The javadoc for this library is available here: [javadoc](https://javadoc.jitpack.io/com/github/alessandrofrenna/broaddy/1.0.1-SNAPSHOT/javadoc/com/github/alessandrofrenna/broaddy/package-summary.html)
 
 ### Maven
 
