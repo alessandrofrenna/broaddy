@@ -104,6 +104,7 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <argLine />
+                    <!--suppress UnresolvedMavenProperty -->
                     <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
                 </configuration>
             </plugin>
