@@ -11,7 +11,7 @@ A `NetworkPeer` can subscribe to multiple `BroadcastNetwork`s.
 
 ## Installation
 This library is hosted on [https://jitpack.io](https://jitpack.io/#alessandrofrenna/broaddy).</br>
-The javadoc for this library is available here: [javadoc](https://javadoc.jitpack.io/com/github/alessandrofrenna/broaddy/1.0.1-SNAPSHOT/javadoc/com/github/alessandrofrenna/broaddy/package-summary.html)
+The javadoc for this library is available here: [javadoc](https://javadoc.jitpack.io/com/github/alessandrofrenna/broaddy/1.0.2-SNAPSHOT/javadoc/com/github/alessandrofrenna/broaddy/package-summary.html)
 
 ### Maven
 
@@ -30,7 +30,7 @@ Add this to your dependencies:
 <dependency>
     <groupId>com.github.alessandrofrenna</groupId>
     <artifactId>broaddy</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 Add this to your dependencies:
 ```
 dependencies {
-        implementation 'com.github.alessandrofrenna:broaddy:1.0.1-SNAPSHOT'
+        implementation 'com.github.alessandrofrenna:broaddy:1.0.2-SNAPSHOT'
 }
 ```
 

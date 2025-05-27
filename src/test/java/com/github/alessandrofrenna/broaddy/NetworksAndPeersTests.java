@@ -44,7 +44,7 @@ public class NetworksAndPeersTests {
 
     @BeforeEach
     void setUp() {
-        network = new DefaultBroadcastNetwork(new NetworkId.String("test_network"));
+        network = new DefaultBroadcastNetwork(new NetworkId.Str("test_network"));
     }
 
     @Test

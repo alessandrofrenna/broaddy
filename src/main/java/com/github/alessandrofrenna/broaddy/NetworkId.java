@@ -22,13 +22,13 @@ import java.util.Objects;
 public interface NetworkId<T> {
     T get();
 
-    record String(java.lang.String id) implements NetworkId<java.lang.String> {
-        public String {
+    record Str(String id) implements NetworkId<String> {
+        public Str {
             Objects.requireNonNull(id, "id is required but it is null");
         }
 
         @Override
-        public java.lang.String get() {
+        public String get() {
             return id;
         }
     }

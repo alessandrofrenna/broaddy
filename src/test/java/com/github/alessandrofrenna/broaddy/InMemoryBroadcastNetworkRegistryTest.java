@@ -45,8 +45,8 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void storeOperation_ofNetworksWithSameId_shouldFail() {
-        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
-        BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
+        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
+        BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
         networkRegistry.store(network1);
         assertThrows(DuplicateNetworkIdException.class, () -> networkRegistry.store(network2));
     }
@@ -63,7 +63,7 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void updateOperation_onNetworksWithDifferentIds_shouldFailWithException() {
-        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
+        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
         BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.UUID());
         networkRegistry.store(network1);
 
@@ -77,8 +77,8 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void updateOperation_ofNetworksWithSameId_shouldReplaceNetwork1WithNetwork2() {
-        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
-        BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
+        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
+        BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
         networkRegistry.store(network1);
 
         final var optional1 = networkRegistry.find(network1.id());
@@ -116,7 +116,7 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void storeOperation_ofNetworksWithDifferentIdTypes_shouldSucceed() {
-        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.String("test_net_id"));
+        BroadcastNetwork network1 = new DefaultBroadcastNetwork(new NetworkId.Str("test_net_id"));
         BroadcastNetwork network2 = new DefaultBroadcastNetwork(new NetworkId.UUID());
         networkRegistry.store(network1);
         networkRegistry.store(network2);
@@ -132,7 +132,7 @@ public class InMemoryBroadcastNetworkRegistryTest {
 
     @Test
     void findOperation_ofAMissingNetworkId_shouldProduceAnEmptyOptional() {
-        NetworkId<String> id = new NetworkId.String("test_net_id");
+        NetworkId<String> id = new NetworkId.Str("test_net_id");
         var optionalNet = networkRegistry.find(id);
         assertTrue(optionalNet.isEmpty());
     }
