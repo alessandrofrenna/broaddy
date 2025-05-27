@@ -1,5 +1,5 @@
 # Broaddy
-[![](https://jitpack.io/v/alessandrofrenna/broaddy.svg)](https://jitpack.io/#alessandrofrenna/broaddy)
+[![Snyk Security](https://github.com/alessandrofrenna/broaddy/actions/workflows/snyk-security.yml/badge.svg)](https://github.com/alessandrofrenna/broaddy/actions/workflows/snyk-security.yml) [![](https://jitpack.io/v/alessandrofrenna/broaddy.svg)](https://jitpack.io/#alessandrofrenna/broaddy)
 
 Broaddy is a lightweight library that allows the creation of small broadcast networks of objects.</br>
 It is a simple implementation of the [Observer design pattern](https://en.wikipedia.org/wiki/Observer_pattern).
