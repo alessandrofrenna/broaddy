@@ -75,7 +75,7 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     }
 
     @Override
-    public <U> Disconnect disconnectPeer(RoutableId<U> routableId) {
+    public Disconnect disconnectPeer(RoutableId<?> routableId) {
         if (Objects.isNull(routableId)) {
             throw new IllegalArgumentException("routableId is required, null provided");
         }
@@ -106,7 +106,7 @@ public class DefaultBroadcastNetwork implements BroadcastNetwork {
     }
 
     @Override
-    public <T>  void broadcast(Message<T> message) {
+    public void broadcast(Message<?> message) {
         networkLock.lock();
         try {
             if (networkStatus == Status.OFFLINE || routablePeer.isEmpty()) {

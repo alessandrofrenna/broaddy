@@ -35,6 +35,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class NetworksAndPeersTests {
     private BroadcastNetwork network;
 
+    record LongId(Long id) implements RoutableId<Long> {
+        @Override
+        public Long get() {
+            return id;
+        }
+    }
+
     @BeforeEach
     void setUp() {
         network = new DefaultBroadcastNetwork(new NetworkId.String("test_network"));
@@ -135,9 +142,14 @@ public class NetworksAndPeersTests {
     void registeringPeersWithDifferentIdTypes_shouldSucceed() {
         NetworkPeer peer1 = new DefaultNetworkPeer(new RoutableId.String("test_peer_id_1"));
         NetworkPeer peer2 = new DefaultNetworkPeer(new RoutableId.UUID());
+        NetworkPeer peer3 = new DefaultNetworkPeer(new LongId(350L));
+        peer1.join(network, (msg) -> {});
         peer1.join(network, (msg) -> {});
         peer2.join(network, (msg) -> {});
-        assertEquals(2, network.size());
+        peer2.join(network, (msg) -> {});
+        peer3.join(network, (msg) -> {});
+        peer3.join(network, (msg) -> {});
+        assertEquals(3, network.size());
     }
 
     @Test

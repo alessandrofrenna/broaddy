@@ -21,6 +21,6 @@ import java.util.function.Consumer;
 
 public interface NetworkPeer extends Routable {
     boolean join(BroadcastNetwork network, Consumer<Message<?>> messageConsumer);
-    <T> boolean leave(NetworkId<T> networkId);
+    boolean leave(NetworkId<?> networkId);
     long countJoinedNetworks();
 }

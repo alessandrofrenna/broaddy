@@ -19,6 +19,6 @@ package com.github.alessandrofrenna.broaddy;
 
 public interface Routable {
     RoutableId<?> id();
-    <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message);
-    <T> void forceDisconnection(NetworkId<T> networkId);
+    void deliverMessage(NetworkId<?> networkId, Message<?> message);
+    void forceDisconnection(NetworkId<?> networkId);
 }

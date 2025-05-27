@@ -22,10 +22,10 @@ import java.util.concurrent.CompletableFuture;
 public interface BroadcastNetwork {
     NetworkId<?> id();
     Connect connectPeer(Routable peer);
-    <U> Disconnect disconnectPeer(RoutableId<U> routableId);
+    Disconnect disconnectPeer(RoutableId<?> routableId);
     long size();
     boolean isEmpty();
-    <T> void broadcast(Message<T> message);
+    void broadcast(Message<?> message);
     CompletableFuture<Void> shutdown();
 
     enum Status {

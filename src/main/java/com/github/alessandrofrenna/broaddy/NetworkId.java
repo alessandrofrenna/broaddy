@@ -19,7 +19,7 @@ package com.github.alessandrofrenna.broaddy;
 
 import java.util.Objects;
 
-public interface NetworkId<T> extends Comparable<NetworkId<T>> {
+public interface NetworkId<T> {
     T get();
 
     record String(java.lang.String id) implements NetworkId<java.lang.String> {
@@ -29,19 +29,13 @@ public interface NetworkId<T> extends Comparable<NetworkId<T>> {
 
         @Override
         public java.lang.String get() {
-            return id();
-        }
-
-        @Override
-        public int compareTo(NetworkId<java.lang.String> other) {
-            return get().compareTo(other.get());
+            return id;
         }
     }
 
-    record UUID(java.util.UUID uuid) implements NetworkId<java.util.UUID> {
-
+    record UUID(java.util.UUID id) implements NetworkId<java.util.UUID> {
         public UUID {
-            Objects.requireNonNull(uuid, "id is required, null provided");
+            Objects.requireNonNull(id, "id is required, null provided");
         }
 
         public UUID() {
@@ -50,12 +44,7 @@ public interface NetworkId<T> extends Comparable<NetworkId<T>> {
 
         @Override
         public java.util.UUID get() {
-            return uuid();
-        }
-
-        @Override
-        public int compareTo(NetworkId<java.util.UUID> other) {
-            return get().compareTo(other.get());
+            return id;
         }
     }
 }

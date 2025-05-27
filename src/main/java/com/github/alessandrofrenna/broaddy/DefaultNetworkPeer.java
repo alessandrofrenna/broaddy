@@ -66,7 +66,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <T> boolean leave(NetworkId<T> networkId) {
+    public boolean leave(NetworkId<?> networkId) {
         if (Objects.isNull(networkId)) {
             throw new IllegalArgumentException("networkId is required, null provided");
         }
@@ -93,7 +93,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <T, V> void deliverMessage(NetworkId<T> networkId, Message<V> message) {
+    public void deliverMessage(NetworkId<?> networkId, Message<?> message) {
         if (Objects.isNull(networkId)) {
             throw new IllegalArgumentException("networkId is required, null provided");
         }
@@ -111,7 +111,7 @@ public class DefaultNetworkPeer implements NetworkPeer {
     }
 
     @Override
-    public <T> void forceDisconnection(NetworkId<T> networkId) {
+    public void forceDisconnection(NetworkId<?> networkId) {
         if (Objects.isNull(networkId)) {
             throw new IllegalArgumentException("networkId is required, null provided");
         }

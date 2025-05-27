@@ -18,8 +18,7 @@
 package com.github.alessandrofrenna.broaddy;
 
 import java.util.Objects;
-
-public interface RoutableId<T> extends Comparable<RoutableId<T>> {
+public interface RoutableId<T> {
     T get();
 
     record String(java.lang.String id) implements RoutableId<java.lang.String> {
@@ -29,19 +28,13 @@ public interface RoutableId<T> extends Comparable<RoutableId<T>> {
 
         @Override
         public java.lang.String get() {
-            return id();
-        }
-
-        @Override
-        public int compareTo(RoutableId<java.lang.String> other) {
-            return get().compareTo(other.get());
+            return id;
         }
     }
 
-    record UUID(java.util.UUID uuid) implements RoutableId<java.util.UUID> {
-
+    record UUID(java.util.UUID id) implements RoutableId<java.util.UUID> {
         public UUID {
-            Objects.requireNonNull(uuid, "id is required, null provided");
+            Objects.requireNonNull(id, "id is required, null provided");
         }
 
         public UUID() {
@@ -50,12 +43,7 @@ public interface RoutableId<T> extends Comparable<RoutableId<T>> {
 
         @Override
         public java.util.UUID get() {
-            return uuid();
-        }
-
-        @Override
-        public int compareTo(RoutableId<java.util.UUID> other) {
-            return get().compareTo(other.get());
+            return id;
         }
     }
 }
