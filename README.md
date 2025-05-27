@@ -30,7 +30,7 @@ Add this to your dependencies:
 <dependency>
     <groupId>com.github.alessandrofrenna</groupId>
     <artifactId>broaddy</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -50,7 +50,7 @@ dependencyResolutionManagement {
 Add this to your dependencies:
 ```
 dependencies {
-        implementation 'com.github.alessandrofrenna:broaddy:1.0.0-SNAPSHOT'
+        implementation 'com.github.alessandrofrenna:broaddy:1.0.1-SNAPSHOT'
 }
 ```
 
