@@ -16,7 +16,7 @@ The javadoc for this library is available here: [javadoc](https://javadoc.jitpac
 
 ### Maven
 
-Enable the repository in your pom.xml:
+Enable the repository in your `pom.xml`:
 ```xml
 <repositories>
     <repository>
@@ -37,7 +37,7 @@ Add this to your dependencies:
 
 ### Gradle
 
-Add it in your root settings.gradle at the end of repositories:
+Add it in your root `settings.gradle` at the end of repositories:
 ```
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -48,7 +48,7 @@ dependencyResolutionManagement {
 }
 ```
 
-Add this to your dependencies:
+Add this to your dependencies in `build.gradle`:
 ```
 dependencies {
         implementation 'com.github.alessandrofrenna:broaddy:1.0.2-SNAPSHOT'
