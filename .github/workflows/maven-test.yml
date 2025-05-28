@@ -12,6 +12,8 @@ on:
           - 'README.md'
 jobs:
   test:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
